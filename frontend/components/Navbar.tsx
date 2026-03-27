@@ -1,0 +1,44 @@
+import { useEffect, useState } from "react";
+import { getUser, logoutUser } from "../utils/auth";
+
+export default function Navbar() {
+
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    setUser(getUser());
+  }, []);
+
+  const logout = () => {
+    logoutUser();
+    window.location.reload();
+  };
+
+  return (
+    <nav className="flex justify-between items-center p-4 border-b">
+
+      <h1 className="text-xl font-bold">RefreshMart</h1>
+
+      <div className="flex gap-6">
+
+        <a href="/">Home</a>
+        <a href="/browse">Browse</a>
+        <a href="/sell">Sell</a>
+
+        {user ? (
+          <>
+            <a href="/account">Account</a>
+            <button onClick={logout}>Logout</button>
+          </>
+        ) : (
+          <>
+            <a href="/login">Login</a>
+            <a href="/signup">Sign Up</a>
+          </>
+        )}
+
+      </div>
+
+    </nav>
+  );
+}
