@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { getUser, logoutUser } from "../utils/auth";
 
 export default function Navbar() {
-
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
@@ -10,17 +9,15 @@ export default function Navbar() {
   }, []);
 
   const logout = () => {
-    logoutUser();
-    window.location.reload();
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("user");
+    window.location.href = "/login";
   };
-
   return (
     <nav className="flex justify-between items-center p-4 border-b">
-
       <h1 className="text-xl font-bold">RefreshMart</h1>
 
       <div className="flex gap-6">
-
         <a href="/">Home</a>
         <a href="/browse">Browse</a>
         <a href="/sell">Sell</a>
@@ -32,13 +29,11 @@ export default function Navbar() {
           </>
         ) : (
           <>
-            <a href="/login">Login</a>
-            <a href="/signup">Sign Up</a>
+            {/* <a href="/login">Login</a> */}
+            {/* <a href="/signup">Sign Up</a> */}
           </>
         )}
-
       </div>
-
     </nav>
   );
 }

@@ -261,7 +261,7 @@ export default function ProductDetail() {
                   {[...Array(5)].map((_, i) => (
                     <Star
                       key={i}
-                      className={`w-4 h-4 ${
+                      className={`w-4 h-4 {
                         i < product.rating
                           ? "fill-yellow-400 text-yellow-400"
                           : "text-border"

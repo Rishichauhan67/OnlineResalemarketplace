@@ -21,7 +21,7 @@ export default function Sell() {
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -116,13 +116,25 @@ export default function Sell() {
     // Simulate API call
     setTimeout(() => {
       const listingData = {
+        id: Date.now(),
         productName: formData.productName,
         brand: formData.brand,
         category: formData.category,
         condition: formData.condition,
         price: parseFloat(formData.price),
         description: formData.description,
+        image: formData.imagePreview,
       };
+      // Get existing listings
+      const existingListings = JSON.parse(
+        localStorage.getItem("myListings") || "[]",
+      );
+
+      // Add new listing
+      existingListings.push(listingData);
+
+      // Save back to localStorage
+      localStorage.setItem("myListings", JSON.stringify(existingListings));
 
       console.log("Listing created successfully:", listingData);
 
@@ -151,10 +163,13 @@ export default function Sell() {
     <Layout>
       <div className="max-w-4xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-12">
-          <h1 className="text-4xl font-bold text-foreground mb-3">Sell Your Items</h1>
-          <p className="text-muted-foreground text-lg">
-            Create a listing for items you want to sell. Fill in the details below to get started.
+        <div className="mb-11">
+          <h1 className="text-3xl font-bold text-foreground mb-3">
+            Sell Your Items
+          </h1>
+          <p className="text-muted-foreground text-sm">
+            Create a listing for items you want to sell. Fill in the details
+            below to get started.
           </p>
         </div>
 
@@ -162,7 +177,9 @@ export default function Sell() {
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Product Image */}
           <div className="bg-secondary rounded border border-border p-8">
-            <h2 className="text-xl font-semibold text-foreground mb-4">Product Image</h2>
+            <h2 className="text-xl font-semibold text-foreground mb-4">
+              Product Image
+            </h2>
 
             {formData.imagePreview ? (
               <div className="relative w-full">
@@ -189,7 +206,9 @@ export default function Sell() {
                   required
                 />
                 <Upload className="w-12 h-12 text-muted-foreground mx-auto mb-2" />
-                <p className="text-foreground font-medium mb-1">Click to upload image</p>
+                <p className="text-foreground font-medium mb-1">
+                  Click to upload image
+                </p>
                 <p className="text-sm text-muted-foreground">
                   Drag and drop or select a file (Max 5MB)
                 </p>
@@ -199,12 +218,17 @@ export default function Sell() {
 
           {/* Product Details */}
           <div className="bg-secondary rounded border border-border p-8">
-            <h2 className="text-xl font-semibold text-foreground mb-6">Product Details</h2>
+            <h2 className="text-xl font-semibold text-foreground mb-6">
+              Product Details
+            </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Product Name */}
               <div>
-                <label htmlFor="productName" className="block text-sm font-medium text-foreground mb-2">
+                <label
+                  htmlFor="productName"
+                  className="block text-sm font-medium text-foreground mb-2"
+                >
                   Product Name *
                 </label>
                 <input
@@ -221,7 +245,10 @@ export default function Sell() {
 
               {/* Brand */}
               <div>
-                <label htmlFor="brand" className="block text-sm font-medium text-foreground mb-2">
+                <label
+                  htmlFor="brand"
+                  className="block text-sm font-medium text-foreground mb-2"
+                >
                   Brand
                 </label>
                 <input
@@ -235,31 +262,12 @@ export default function Sell() {
                 />
               </div>
 
-              {/* Category */}
-              <div>
-                <label htmlFor="category" className="block text-sm font-medium text-foreground mb-2">
-                  Category *
-                </label>
-                <select
-                  id="category"
-                  name="category"
-                  value={formData.category}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-border rounded bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                >
-                  <option value="electronics">Electronics</option>
-                  <option value="furniture">Furniture</option>
-                  <option value="clothing">Clothing</option>
-                  <option value="home">Home & Garden</option>
-                  <option value="sports">Sports & Outdoors</option>
-                  <option value="books">Books</option>
-                  <option value="other">Other</option>
-                </select>
-              </div>
-
               {/* Condition */}
               <div>
-                <label htmlFor="condition" className="block text-sm font-medium text-foreground mb-2">
+                <label
+                  htmlFor="condition"
+                  className="block text-sm font-medium text-foreground mb-2"
+                >
                   Condition *
                 </label>
                 <select
@@ -278,7 +286,10 @@ export default function Sell() {
 
               {/* Price */}
               <div>
-                <label htmlFor="price" className="block text-sm font-medium text-foreground mb-2">
+                <label
+                  htmlFor="price"
+                  className="block text-sm font-medium text-foreground mb-2"
+                >
                   Price ($) *
                 </label>
                 <input
@@ -299,8 +310,13 @@ export default function Sell() {
 
           {/* Description */}
           <div className="bg-secondary rounded border border-border p-8">
-            <h2 className="text-xl font-semibold text-foreground mb-4">Description</h2>
-            <label htmlFor="description" className="block text-sm font-medium text-foreground mb-2">
+            <h2 className="text-xl font-semibold text-foreground mb-4">
+              Description
+            </h2>
+            <label
+              htmlFor="description"
+              className="block text-sm font-medium text-foreground mb-2"
+            >
               Product Description *
             </label>
             <textarea
@@ -320,31 +336,19 @@ export default function Sell() {
 
           {/* Listing Settings */}
           <div className="bg-secondary rounded border border-border p-8">
-            <h2 className="text-xl font-semibold text-foreground mb-6">Listing Settings</h2>
+            <h2 className="text-xl font-semibold text-foreground mb-6">
+              Listing Settings
+            </h2>
 
             <div className="space-y-4">
-              <label className="flex items-start gap-3">
-                <input
-                  type="checkbox"
-                  defaultChecked
-                  className="w-4 h-4 border border-border rounded bg-background text-primary focus:ring-2 focus:ring-primary mt-1"
-                />
-                <div>
-                  <p className="font-medium text-foreground">Allow offers</p>
-                  <p className="text-sm text-muted-foreground">
-                    Buyers can make offers on your item
-                  </p>
-                </div>
-              </label>
+              <label className="flex items-start gap-3"></label>
 
               <label className="flex items-start gap-3">
-                <input
-                  type="checkbox"
-                  defaultChecked
-                  className="w-4 h-4 border border-border rounded bg-background text-primary focus:ring-2 focus:ring-primary mt-1"
-                />
+                <input  type="checkbox"  defaultChecked className="w-4 h-4 border border-border rounded bg-background text-primary focus:ring-2 focus:ring-primary mt-1"/>
                 <div>
-                  <p className="font-medium text-foreground">Local pickup available</p>
+                  <p className="font-medium text-foreground">
+                    Local pickup available
+                  </p>
                   <p className="text-sm text-muted-foreground">
                     Buyers can pick up the item in person
                   </p>
@@ -358,7 +362,9 @@ export default function Sell() {
                   className="w-4 h-4 border border-border rounded bg-background text-primary focus:ring-2 focus:ring-primary mt-1"
                 />
                 <div>
-                  <p className="font-medium text-foreground">Shipping available</p>
+                  <p className="font-medium text-foreground">
+                    Shipping available
+                  </p>
                   <p className="text-sm text-muted-foreground">
                     You'll handle shipping to buyers
                   </p>
@@ -406,7 +412,8 @@ export default function Sell() {
           {/* Info */}
           <div className="bg-blue-50 border border-blue-200 rounded p-4">
             <p className="text-sm text-blue-900">
-              ℹ️ <strong>Tips for a great listing:</strong> Use clear photos, be honest about the condition, provide detailed descriptions, and set a fair price.
+              <strong>note:</strong> Use clear photos, be honest about the
+              condition, provide detailed descriptions, and set a fair price.
             </p>
           </div>
         </form>

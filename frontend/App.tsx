@@ -14,6 +14,8 @@ import Cart from "./pages/Cart";
 import Login from "./pages/Login";
 import Register from "./pages/Register";  
 import { Home } from "lucide-react";
+import ProtectedRoute from "./components/ProtectedRoute";
+import ScrollToTop from "@/components/ScrollToTop";
 
 const queryClient = new QueryClient();
 
@@ -33,8 +35,8 @@ export default function App() {
               <Route path="/sell" element={<Sell />} />
               <Route path="/account" element={<Account />} />
               <Route path="/cart" element={<Cart />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
+              {/* <Route path="/login" element={<Login />} /> */}
+              {/* <Route path="/register" element={<Register />} /> */}
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
@@ -42,5 +44,7 @@ export default function App() {
         </CartProvider>
       </BrowserRouter>
     </QueryClientProvider>
+    
   );
+    
 }

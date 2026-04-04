@@ -4,12 +4,13 @@ import { Search, ArrowRight } from "lucide-react";
 import Layout from "@/components/Layout";
 import ProductCard, { Product } from "@/components/ProductCard";
 
+
 // Mock products data
 const FEATURED_PRODUCTS: Product[] = [
   {
     id: "1",
     title: "MacBook Pro 2019 - 13 inch",
-    price: 599.99,
+    price: 250.99,
     image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&h=300&fit=crop",
     condition: "good",
     category: "electronics",
@@ -31,7 +32,7 @@ const FEATURED_PRODUCTS: Product[] = [
   {
     id: "3",
     title: "Samsung 4K Smart TV 55 inch",
-    price: 399.99,
+    price: 130.99,
     image: "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=400&h=300&fit=crop",
     condition: "good",
     category: "electronics",
@@ -65,11 +66,72 @@ const FEATURED_PRODUCTS: Product[] = [
     id: "6",
     title: "Bookshelf - White Shelving Unit",
     price: 79.99,
-    image: "https://images.unsplash.com/photo-1593062096033-9a26b09da705?w=400&h=300&fit=crop",
+    image: "https://images.unsplash.com/photo-1668003375925-03101d2f2fe6?q=80&w=500&h=400fit=crop",
     condition: "good",
     category: "furniture",
     seller: "home_staging",
     postedDaysAgo: 6,
+    rating: 4,
+  },
+];
+
+export const PRODUCTS: Product[] = [
+  // 🔹 Existing products (Index वाले)
+  {
+    id: "1",
+    title: "MacBook Pro 2019 - 13 inch",
+    price: 250.99,
+    image: "",
+    condition: "good",
+    category: "electronics",
+    seller: "john_seller",
+    postedDaysAgo: 2,
+    rating: 4,
+  },
+  {
+    id: "2",
+    title: "Wooden Desk - Oak",
+    price: 149.99,
+    image: "",
+    condition: "like-new",
+    category: "furniture",
+    seller: "sarah_designs",
+    postedDaysAgo: 1,
+    rating: 5,
+  },
+
+  // 🔹 NEW products (added by you)
+  {
+    id: "6",
+    title: "iPhone 12",
+    price: 300.0,
+    image: "",
+    condition: "good",
+    category: "electronics",
+    seller: "mobile_store",
+    postedDaysAgo: 1,
+    rating: 4,
+  },
+  {
+    id: "7",
+    title: "Study Table",
+    price: 120.0,
+    image: "",
+    condition: "like-new",
+    category: "furniture",
+    seller: "furniture_hub",
+    postedDaysAgo: 3,
+    rating: 5,
+  },
+  {
+    id: "8",
+    title: "Gaming Keyboard",
+    price: 60.0,
+    image: "",
+    condition: "like-new",
+    category: "electronics",
+    seller: "gaming_store",
+    postedDaysAgo: 2,
     rating: 4,
   },
 ];
