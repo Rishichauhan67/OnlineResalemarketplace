@@ -11,39 +11,39 @@ import Browse from "./pages/Browse";
 import Sell from "./pages/Sell";
 import Account from "./pages/Account";
 import Cart from "./pages/Cart";
-import Login from "./pages/Login";
-import Register from "./pages/Register";  
-import { Home } from "lucide-react";
-
 
 const queryClient = new QueryClient();
 
+const clerkKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+
 export default function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <CartProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/" element={<Index />} />
-              <Route path="/product/:id" element={<ProductDetail />} />
-              <Route path="/browse" element={<Browse />} />
-              <Route path="/sell" element={<Sell />} />
-              <Route path="/account" element={<Account />} />
-              <Route path="/cart" element={<Cart />} />
-              {/* <Route path="/login" element={<Login />} /> */}
-              {/* <Route path="/register" element={<Register />} /> */}
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </TooltipProvider>
-        </CartProvider>
-      </BrowserRouter>
-    </QueryClientProvider>
-    
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
+          <CartProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+
+              <Routes>
+                {/* ✅ REAL PAGES */}
+                {/* <Route path="/" element={<Index />} /> */}
+                <Route path="/browse" element={<Browse />} />
+                <Route path="/sell" element={<Sell />} />
+                <Route path="/account" element={<Account />} />
+                <Route path="/cart" element={<Cart />} />
+                <Route path="/product/:id" element={<ProductDetail />} />
+
+                {/* Clerk auth routes */}
+                <Route path="/sign-in/*" element={<div>Sign In</div>} />
+                <Route path="/sign-up/*" element={<div>Sign Up</div>} />
+
+                {/* fallback */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </TooltipProvider>
+          </CartProvider>
+        </BrowserRouter>
+      </QueryClientProvider>
   );
-    
 }

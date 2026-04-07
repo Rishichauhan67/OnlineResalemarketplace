@@ -2,6 +2,8 @@ import { useState } from "react";
 import Layout from "@/components/Layout";
 import { Upload, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { addProduct } from "@shared/api"; // 👈 add at top
+
 
 export default function Sell() {
   const { toast } = useToast();
@@ -73,91 +75,87 @@ export default function Sell() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log("Form submitted");
+ 
 
-    // Validation
-    if (!formData.productName.trim()) {
-      toast({
-        title: "Missing product name",
-        description: "Please enter a product name.",
-      });
-      return;
-    }
+const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+  console.log("Form submitted");
 
-    if (!formData.price || parseFloat(formData.price) <= 0) {
-      toast({
-        title: "Invalid price",
-        description: "Please enter a valid price.",
-      });
-      return;
-    }
+  // Validation
+  if (!formData.productName.trim()) {
+    toast({
+      title: "Missing product name",
+      description: "Please enter a product name.",
+    });
+    return;
+  }
 
-    if (!formData.description.trim()) {
-      toast({
-        title: "Missing description",
-        description: "Please enter a product description.",
-      });
-      return;
-    }
+  if (!formData.price || parseFloat(formData.price) <= 0) {
+    toast({
+      title: "Invalid price",
+      description: "Please enter a valid price.",
+    });
+    return;
+  }
 
-    if (!formData.imagePreview) {
-      toast({
-        title: "Missing image",
-        description: "Please upload a product image.",
-      });
-      return;
-    }
+  if (!formData.description.trim()) {
+    toast({
+      title: "Missing description",
+      description: "Please enter a product description.",
+    });
+    return;
+  }
 
-    setIsSubmitting(true);
-    console.log("Creating listing with data:", formData);
+  if (!formData.imagePreview) {
+    toast({
+      title: "Missing image",
+      description: "Please upload a product image.",
+    });
+    return;
+  }
 
-    // Simulate API call
-    setTimeout(() => {
-      const listingData = {
-        id: Date.now(),
-        productName: formData.productName,
-        brand: formData.brand,
-        category: formData.category,
-        condition: formData.condition,
-        price: parseFloat(formData.price),
-        description: formData.description,
-        image: formData.imagePreview,
-      };
-      // Get existing listings
-      const existingListings = JSON.parse(
-        localStorage.getItem("myListings") || "[]",
-      );
+  // 🚀 ADD THIS PART (API CALL)
+  try {
+    const newProduct = {
+      title: formData.productName,
+      price: parseFloat(formData.price),
+      description: formData.description,
+      image: formData.imagePreview, // for now base64 or URL
+    };
 
-      // Add new listing
-      existingListings.push(listingData);
+    await addProduct(newProduct);
 
-      // Save back to localStorage
-      localStorage.setItem("myListings", JSON.stringify(existingListings));
+    toast({
+      title: "Success 🎉",
+      description: "Product added successfully!",
+    });
 
-      console.log("Listing created successfully:", listingData);
+    console.log("Product added");
 
-      toast({
-        title: "Success!",
-        description: `"${formData.productName}" has been listed for sale!`,
-      });
+    // Optional: reset form
+    // setFormData({ productName: "", price: "", description: "", imagePreview: "" });
 
-      // Reset form
-      setFormData({
-        productName: "",
-        brand: "",
-        category: "electronics",
-        condition: "good",
-        price: "",
-        description: "",
-        image: null,
-        imagePreview: "",
-      });
+  } catch (error) {
+    console.log(error);
 
-      setIsSubmitting(false);
-    }, 1000);
-  };
+    toast({
+      title: "Error ❌",
+      description: "Failed to add product",
+    });
+  }
+
+  // Reset form after successful submission
+  setFormData({
+    productName: "",
+    brand: "",
+    category: "electronics",
+    condition: "good",
+    price: "",
+    description: "",
+    image: null,
+    imagePreview: "",
+  });
+};
 
   return (
     <Layout>

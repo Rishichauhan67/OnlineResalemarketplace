@@ -1,23 +1,31 @@
-import "dotenv/config";
 import express from "express";
+import mongoose from "mongoose";
 import cors from "cors";
-import { handleDemo } from "./routes/demo";
+import dotenv from "dotenv";
+import productRoutes from "./routes/productRoutes";
+
+dotenv.config();
 
 export function createServer() {
   const app = express();
 
-  // Middleware
   app.use(cors());
   app.use(express.json());
-  app.use(express.urlencoded({ extended: true }));
 
-  // Example API routes
-  app.get("/api/ping", (_req, res) => {
-    const ping = process.env.PING_MESSAGE ?? "ping";
-    res.json({ message: ping });
-  });
+  // Routes
+  app.use("/api/products", productRoutes);
 
-  app.get("/api/demo", handleDemo);
+  // DB Connect - connect if not already connected
+  if (mongoose.connection.readyState === 0 && process.env.MONGO_URI) {
+    mongoose.connect(process.env.MONGO_URI)
+      .then(() => {
+        console.log("MongoDB Connected");
+      })
+      .catch(err => {
+        console.log("MongoDB connection failed:", err.message);
+        console.log("Server will continue without database connection");
+      });
+  }
 
   return app;
 }
