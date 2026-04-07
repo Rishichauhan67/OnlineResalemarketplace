@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { getUser, setUser } from "../utils/auth";
 import EditProfileModal from "../components/EditProfileModal";
-import ProductCard from "@/components/ProductCard";
-import { User, ShoppingBag, Heart, Package } from "lucide-react";
-import { string } from "zod/v4";
+// import ProductCard from "@/components/ProductCard";
+// import { User, ShoppingBag, Heart, Package } from "lucide-react";
+// import { string } from "zod/v4";
 
 export default function Account() {
   const [user, setUserState] = useState(getUser());
@@ -20,7 +20,7 @@ export default function Account() {
     setListings(storedListings);
   }, []);
 
-  //  const listings = JSON.parse(localStorage.getItem("myListings") || "[]");
+  // const listings = JSON.parse(localStorage.getItem("myListings") || "[]");
 
   const handleSave = (data: any) => {
     setUser(data);

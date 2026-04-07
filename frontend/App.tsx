@@ -14,8 +14,7 @@ import Cart from "./pages/Cart";
 import Login from "./pages/Login";
 import Register from "./pages/Register";  
 import { Home } from "lucide-react";
-import ProtectedRoute from "./components/ProtectedRoute";
-import ScrollToTop from "@/components/ScrollToTop";
+
 
 const queryClient = new QueryClient();
 

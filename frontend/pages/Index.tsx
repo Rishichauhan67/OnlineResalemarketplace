@@ -3,6 +3,10 @@ import { Link } from "react-router-dom";
 import { Search, ArrowRight } from "lucide-react";
 import Layout from "@/components/Layout";
 import ProductCard, { Product } from "@/components/ProductCard";
+import Testimonials from "../components/Testimonials";
+import Articles from "../components/Articles";
+import { formatPrice } from "../utils/formatPrice";
+
 
 
 // Mock products data
@@ -10,8 +14,9 @@ const FEATURED_PRODUCTS: Product[] = [
   {
     id: "1",
     title: "MacBook Pro 2019 - 13 inch",
-    price: 250.99,
-    image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&h=300&fit=crop",
+    price: 45000,
+    image:
+      "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&h=300&fit=crop",
     condition: "good",
     category: "electronics",
     seller: "john_seller",
@@ -21,8 +26,9 @@ const FEATURED_PRODUCTS: Product[] = [
   {
     id: "2",
     title: "Wooden Desk - Oak",
-    price: 149.99,
-    image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&h=300&fit=crop",
+    price: 7000,
+    image:
+      "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&h=300&fit=crop",
     condition: "like-new",
     category: "furniture",
     seller: "sarah_designs",
@@ -31,9 +37,10 @@ const FEATURED_PRODUCTS: Product[] = [
   },
   {
     id: "3",
-    title: "Samsung 4K Smart TV 55 inch",
-    price: 130.99,
-    image: "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=400&h=300&fit=crop",
+    title: "Samsung laptop - 15 inch",
+    price: 29999,
+    image:
+      "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=400&h=300&fit=crop",
     condition: "good",
     category: "electronics",
     seller: "tech_store",
@@ -43,8 +50,9 @@ const FEATURED_PRODUCTS: Product[] = [
   {
     id: "4",
     title: "Office Chair - Black Mesh",
-    price: 89.99,
-    image: "https://images.unsplash.com/photo-1701937189060-8b87985d85e1?w=800&h=600&fit=crop",
+    price: 1899,
+    image:
+      "https://images.unsplash.com/photo-1701937189060-8b87985d85e1?w=800&h=600&fit=crop",
     condition: "fair",
     category: "furniture",
     seller: "office_supplies",
@@ -54,8 +62,9 @@ const FEATURED_PRODUCTS: Product[] = [
   {
     id: "5",
     title: "Sony Wireless Headphones",
-    price: 149.99,
-    image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=300&fit=crop",
+    price: 12999,
+    image:
+      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=300&fit=crop",
     condition: "like-new",
     category: "electronics",
     seller: "music_lover",
@@ -64,11 +73,12 @@ const FEATURED_PRODUCTS: Product[] = [
   },
   {
     id: "6",
-    title: "Bookshelf - White Shelving Unit",
-    price: 79.99,
-    image: "https://images.unsplash.com/photo-1668003375925-03101d2f2fe6?q=80&w=500&h=400fit=crop",
+    title: "Iphone 12",
+    price: 21000.0,
+    image:
+      "https://images.unsplash.com/photo-1668003375925-03101d2f2fe6?q=80&w=500&h=400fit=crop",
     condition: "good",
-    category: "furniture",
+    category: "electronics",
     seller: "home_staging",
     postedDaysAgo: 6,
     rating: 4,
@@ -137,9 +147,9 @@ export const PRODUCTS: Product[] = [
 ];
 
 const CATEGORIES = [
-  { name: "Electronics", count: 342 },
-  { name: "Furniture", count: 218 },
-  { name: "Appliances", count: 156 },
+  { name: "Electronics", count: 15},
+  { name: "Furniture", count: 10},
+  { name: "Appliances", count: 8 },
   { name: "Clothing", count: 89 },
 ];
 
@@ -164,11 +174,12 @@ export default function Index() {
               Find Quality Refurbished Items
             </h1>
             <p className="text-base sm:text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Buy and sell refurbished electronics, furniture, and household items.
-              Trusted marketplace for quality goods at great prices.
+              Buy and sell refurbished electronics, furniture, and household
+              items. Trusted marketplace for quality goods at great prices.
             </p>
 
             {/* Search Bar */}
+
             <form onSubmit={handleSearch} className="max-w-2xl mx-auto">
               <div className="flex gap-2">
                 <input
@@ -192,7 +203,7 @@ export default function Index() {
       </section>
 
       {/* Quick Stats */}
-      <section className="border-b border-border">
+      {/* <section className="border-b border-border">
         <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             <div>
@@ -213,12 +224,14 @@ export default function Index() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Categories */}
       <section className="border-b border-border">
         <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-foreground mb-8">Browse by Category</h2>
+          <h2 className="text-2xl font-bold text-foreground mb-8">
+            Browse by Category
+          </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {CATEGORIES.map((category) => (
               <Link
@@ -229,7 +242,10 @@ export default function Index() {
                 <p className="font-medium text-foreground group-hover:text-primary transition-colors">
                   {category.name}
                 </p>
-                <p className="text-xs text-muted-foreground mt-1">{category.count} items</p>
+                
+                <p className="text-xs text-muted-foreground mt-1">
+                  {category.count} items
+                </p>
               </Link>
             ))}
           </div>
@@ -240,7 +256,10 @@ export default function Index() {
       <section className="border-b border-border">
         <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl font-bold text-foreground">Featured Listings</h2>
+            <h2 className="text-2xl font-bold text-foreground">
+              Featured Listings  
+              
+            </h2>
             <Link
               to="/browse"
               className="flex items-center gap-2 text-primary hover:opacity-80 transition-opacity font-medium text-sm"
@@ -256,23 +275,32 @@ export default function Index() {
           </div>
         </div>
       </section>
+      <>
+        {/* your existing sections */}
+
+        <Testimonials />
+
+      </>
+      <Articles />
 
       {/* CTA Section - Become a Seller */}
-      <section className="bg-secondary border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold text-foreground mb-4">Have Items to Sell?</h2>
-            <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Join our community of sellers and reach thousands of buyers looking for quality
-              refurbished products.
-            </p>
-            <Link
-              to="/sell"
-              className="inline-block bg-primary text-primary-foreground px-8 py-3 rounded font-medium hover:opacity-90 transition-opacity"
-            >
-              Start Selling Today
-            </Link>
-          </div>
+      <section className="bg-muted border-y border-border  flex items-center mb-1">
+        <div className="max-w-5xl mx-auto px-4 py-12 sm:px-6 lg:px-8 text-center space-y-4">
+          <h2 className="text-3xl font-semibold text-foreground">
+            Have Items to Sell?
+          </h2>
+
+          <p className="text-muted-foreground max-w-xl mx-auto">
+            Join our community of sellers and reach thousands of buyers looking
+            for quality refurbished products.
+          </p>
+
+          <Link
+            to="/sell"
+            className="inline-block bg-primary text-primary-foreground px-6 py-3 rounded-md font-medium hover:opacity-90 transition"
+          >
+            Start Selling Today
+          </Link>
         </div>
       </section>
     </Layout>

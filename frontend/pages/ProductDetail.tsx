@@ -56,7 +56,7 @@ const PRODUCT_DETAILS: Record<
   },
   "3": {
     id: "3",
-    title: "Samsung 4K Smart TV 55 inch",
+    title: "Samsung laptop - 15 inch",
     price: 399.99,
     image:
       "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=800&h=600&fit=crop",
@@ -90,7 +90,11 @@ const PRODUCT_DETAILS: Record<
     description:
       "Sturdy office chair with breathable black mesh back. Adjustable height and tilt. Some wear on seat cushion, but fully functional and comfortable for long work sessions.",
     specs: [
-      "Height Adjustable","Tilt Mechanism","Mesh Back",   "Padded Seat",   "Like new condition",
+      "Height Adjustable",
+      "Tilt Mechanism",
+      "Mesh Back",
+      "Padded Seat",
+      "Like new condition",
     ],
   },
   "5": {
@@ -134,7 +138,7 @@ const PRODUCT_DETAILS: Record<
       "6.1-inch Super Retina XDR Display",
       "Battery Health at 90%",
     ],
-  }, 
+  },
 };
 
 export default function ProductDetail() {
@@ -210,7 +214,11 @@ export default function ProductDetail() {
                 {product.title}
               </h1>
               <p className="text-4xl font-bold text-primary mb-4">
-                ${product.price.toFixed(2)}
+                {new Intl.NumberFormat("en-IN", {
+                  style: "currency",
+                  currency: "INR",
+                  maximumFractionDigits: 0,
+                }).format(product.price)}
               </p>
 
               {/* Category and Seller */}

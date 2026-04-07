@@ -1,6 +1,4 @@
 import { Link } from "react-router-dom";
-import { Star } from "lucide-react";
-
 export interface Product {
   id: string;
   title: string;
@@ -37,7 +35,9 @@ export default function ProductCard({ product }: ProductCardProps) {
           alt={product.title}
           className="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
         />
-        <span className={`absolute top-3 right-3 text-xs font-medium px-2 py-1 rounded ${conditionStyles[product.condition]}`}>
+        <span
+          className={`absolute top-3 right-3 text-xs font-medium px-2 py-1 rounded ${conditionStyles[product.condition]}`}
+        >
           {product.condition.replace("-", " ")}
         </span>
       </div>
@@ -51,8 +51,12 @@ export default function ProductCard({ product }: ProductCardProps) {
 
         {/* Price */}
         <div className="mb-3">
-          <p className="text-lg font-bold text-primary">
-            ${product.price.toFixed(2)}
+          <p className="text-2xl font-semibold tracking-tight text-primary">
+            {new Intl.NumberFormat("en-IN", {
+              style: "currency",
+              currency: "INR",
+              maximumFractionDigits: 0,
+            }).format(product.price)}
           </p>
         </div>
 
@@ -60,16 +64,12 @@ export default function ProductCard({ product }: ProductCardProps) {
         <div className="text-xs text-muted-foreground space-y-1 mb-3">
           <p className="capitalize">{product.category}</p>
           <p>
-            Posted {product.postedDaysAgo} {product.postedDaysAgo === 1 ? "day" : "days"} ago
+            Posted {product.postedDaysAgo}{" "}
+            {product.postedDaysAgo === 1 ? "day" : "days"} ago
           </p>
         </div>
 
-        {/* Seller */}
-        {/* <div className="border-t border-border pt-3">
-          <p className="text-xs text-muted-foreground">
-            by <span className="text-foreground font-medium">{product.seller}</span>
-          </p>
-        </div> */}
+        {/* Seller Info */}
       </div>
     </Link>
   );

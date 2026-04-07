@@ -206,9 +206,9 @@ export default function EditProfileModal({
               className="w-full px-4 py-2 border border-border rounded bg-secondary text-foreground focus:outline-none focus:ring-2 focus:ring-primary resize-none"
             />
 
-            <p className="text-xs text-muted-foreground mt-1">
-              {formData.bio.length}/500 characters
-            </p>
+            {/* <p className="text-xs text-muted-foreground mt-1">
+              {formData.bio.length}
+            </p> */}
           </div>
 
           {/* Buttons */}
