@@ -29,7 +29,6 @@
     // "baseUrl": ".",
     "paths": {
       "@/*": ["./frontend/*"],
-      "@shared/*": ["./shared/*"]
     }
   },
   "include": [

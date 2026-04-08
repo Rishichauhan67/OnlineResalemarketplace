@@ -147,7 +147,6 @@
 //     </Layout>
 //   );
 // }
-import { getProducts } from "@shared/api";
 import { useEffect, useState } from "react";
 // import { getProducts } from "@/shared/api";
 
@@ -157,18 +156,18 @@ const Browse = () => {
   const [loading, setLoading] = useState(true);
 
   // 🔌 Fetch data from backend
-  useEffect(() => {
-    getProducts()
-      .then((data) => {
-        console.log("API DATA:", data);
-        setPRODUCTS(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setLoading(false);
-      });
-  }, []);
+  // useEffect(() => {
+    // getProducts()
+    //   .then((data) => {
+    //     console.log("API DATA:", data);
+    //     setPRODUCTS(data);
+    //     setLoading(false);
+    //   })
+  //     .catch((err) => {
+  //       console.log(err);
+  //       setLoading(false);
+  //     });
+  // }, []);
 
   return (
     <div className="p-6">

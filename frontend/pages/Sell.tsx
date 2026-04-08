@@ -1,421 +1,163 @@
-import { useState } from "react";
-import Layout from "@/components/Layout";
-import { Upload, X } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import { addProduct } from "@shared/api"; // 👈 add at top
-
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 export default function Sell() {
-  const { toast } = useToast();
-  const [formData, setFormData] = useState({
-    productName: "",
-    brand: "",
-    category: "electronics",
-    condition: "good",
+  const [form, setForm] = useState({
+    name: "",
     price: "",
-    description: "",
-    image: null as File | null,
-    imagePreview: "",
+    condition: "Good",
+    imageFile: null,
   });
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [preview, setPreview] = useState("");
+  const [products, setProducts] = useState([]);
 
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >,
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+  // 📦 Convert file → base64
+  const handleImageUpload = (e: any) => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+    reader.onloadend = () => {
+      setForm({
+        ...form,
+        imageFile: reader.result as string, // This converts the file to a long string
+      });
+      setPreview(reader.result as string);
+    };
+
     if (file) {
-      // Validate file type
-      if (!file.type.startsWith("image/")) {
-        toast({
-          title: "Invalid file type",
-          description: "Please select a valid image file.",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      // Validate file size (max 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        toast({
-          title: "File too large",
-          description: "Image must be less than 5MB.",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData((prev) => ({
-          ...prev,
-          image: file,
-          imagePreview: reader.result as string,
-        }));
-      };
       reader.readAsDataURL(file);
     }
   };
 
-  const removeImage = () => {
-    setFormData((prev) => ({
-      ...prev,
-      image: null,
-      imagePreview: "",
-    }));
+  // 📥 Fetch products
+  const fetchProducts = async () => {
+    const res = await axios.get("http://localhost:5000/api/products");
+    setProducts(res.data);
   };
 
- 
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
-const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-  e.preventDefault();
-  console.log("Form submitted");
+  // Sell.tsx
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-  // Validation
-  if (!formData.productName.trim()) {
-    toast({
-      title: "Missing product name",
-      description: "Please enter a product name.",
-    });
-    return;
-  }
+    // Create FormData
+    const data = new FormData();
+    data.append("name", form.name);
+    data.append("price", form.price);
+    data.append("condition", form.condition);
 
-  if (!formData.price || parseFloat(formData.price) <= 0) {
-    toast({
-      title: "Invalid price",
-      description: "Please enter a valid price.",
-    });
-    return;
-  }
+    if (form.imageFile) {
+      // This MUST be named "image" to match upload.single("image") in the backend
+      data.append("image", form.imageFile);
+    }
 
-  if (!formData.description.trim()) {
-    toast({
-      title: "Missing description",
-      description: "Please enter a product description.",
-    });
-    return;
-  }
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/products",
+        data,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        },
+      );
 
-  if (!formData.imagePreview) {
-    toast({
-      title: "Missing image",
-      description: "Please upload a product image.",
-    });
-    return;
-  }
+      console.log("Success!", response.data);
+      fetchProducts(); // Refresh the list
 
-  // 🚀 ADD THIS PART (API CALL)
-  try {
-    const newProduct = {
-      title: formData.productName,
-      price: parseFloat(formData.price),
-      description: formData.description,
-      image: formData.imagePreview, // for now base64 or URL
-    };
-
-    await addProduct(newProduct);
-
-    toast({
-      title: "Success 🎉",
-      description: "Product added successfully!",
-    });
-
-    console.log("Product added");
-
-    // Optional: reset form
-    // setFormData({ productName: "", price: "", description: "", imagePreview: "" });
-
-  } catch (error) {
-    console.log(error);
-
-    toast({
-      title: "Error ❌",
-      description: "Failed to add product",
-    });
-  }
-
-  // Reset form after successful submission
-  setFormData({
-    productName: "",
-    brand: "",
-    category: "electronics",
-    condition: "good",
-    price: "",
-    description: "",
-    image: null,
-    imagePreview: "",
-  });
-};
+      // Reset Form
+      setForm({ name: "", price: "", condition: "Good", imageFile: null });
+      setPreview("");
+    } catch (err: any) {
+      console.error("Backend Error:", err.response?.data || err.message);
+    }
+  };
 
   return (
-    <Layout>
-      <div className="max-w-4xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="mb-11">
-          <h1 className="text-3xl font-bold text-foreground mb-3">
-            Sell Your Items
-          </h1>
-          <p className="text-muted-foreground text-sm">
-            Create a listing for items you want to sell. Fill in the details
-            below to get started.
-          </p>
+    <div className="flex min-h-screen bg-gray-50">
+      {/* LEFT SIDEBAR */}
+      <div className="w-64 bg-white shadow p-5">
+        <h2 className="text-xl font-bold mb-6">Seller Panel</h2>
+        <p className="text-sm text-gray-500">Manage Products</p>
+      </div>
+
+      {/* MAIN */}
+      <div className="flex-1 p-6">
+        {/* ADD PRODUCT */}
+        <div className="bg-white p-6 rounded-xl shadow mb-9">
+          <h2 className="text-lg font-semibold mb-4">Add Product</h2>
+
+          <div className="grid md:grid-cols-2 gap-4">
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="border p-2 rounded"
+            />
+            <input
+              placeholder="Product Name"
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
+              className="border p-2 rounded"
+            />
+
+            <input
+              placeholder="Price"
+              value={form.price}
+              onChange={(e) => setForm({ ...form, price: e.target.value })}
+              className="border p-2 rounded"
+            />
+
+            <select
+              value={form.condition}
+              onChange={(e) => setForm({ ...form, condition: e.target.value })}
+              className="border p-2 rounded"
+            >
+              <option>Like New</option>
+              <option>Good</option>
+              <option>Fair</option>
+            </select>
+
+            {/* FILE INPUT */}
+          </div>
+
+          {/* IMAGE PREVIEW */}
+          {preview && (
+            <img
+              src={preview}
+              className="mt-4 w-32 h-32 object-cover rounded"
+            />
+          )}
+
+          <button
+            onClick={handleSubmit}
+            className="mt-4 bg-black text-white px-6 py-2 rounded"
+          >
+            Add Product
+          </button>
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-8">
-          {/* Product Image */}
-          <div className="bg-secondary rounded border border-border p-8">
-            <h2 className="text-xl font-semibold text-foreground mb-4">
-              Product Image
-            </h2>
+        {/* PRODUCT LIST */}
+        <div>
+          <h2 className="text-lg font-semibold mb-4 ">Your Products</h2>
 
-            {formData.imagePreview ? (
-              <div className="relative w-full">
+          <div className="grid grid-cols-3 md:grid-cols-4 gap-6 border-r-2">
+            {products.map((p: any) => (
+              <div key={p._id} className="bg-white p-4 rounded shadow">
                 <img
-                  src={formData.imagePreview}
-                  alt="Product preview"
-                  className="w-full h-64 object-cover rounded border border-border"
+                  src={p.image}
+                  className="h-44 w-full object-cover rounded"
                 />
-                <button
-                  type="button"
-                  onClick={removeImage}
-                  className="absolute top-2 right-2 bg-destructive text-destructive-foreground p-2 rounded hover:opacity-90 transition-opacity"
-                >
-                  <X className="w-5 h-5" />
-                </button>
+                <h3 className="mt-2 font-semibold">{p.name}</h3>
+                <p className="text-green-900">₹{p.price}</p>
+                <p className="text-sm text-gray-500">{p.condition}</p>
               </div>
-            ) : (
-              <label className="block w-full border-2 border-dashed border-border rounded p-8 text-center cursor-pointer hover:border-primary hover:bg-border transition-colors">
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="hidden"
-                  required
-                />
-                <Upload className="w-12 h-12 text-muted-foreground mx-auto mb-2" />
-                <p className="text-foreground font-medium mb-1">
-                  Click to upload image
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  Drag and drop or select a file (Max 5MB)
-                </p>
-              </label>
-            )}
+            ))}
           </div>
-
-          {/* Product Details */}
-          <div className="bg-secondary rounded border border-border p-8">
-            <h2 className="text-xl font-semibold text-foreground mb-6">
-              Product Details
-            </h2>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Product Name */}
-              <div>
-                <label
-                  htmlFor="productName"
-                  className="block text-sm font-medium text-foreground mb-2"
-                >
-                  Product Name *
-                </label>
-                <input
-                  id="productName"
-                  name="productName"
-                  type="text"
-                  placeholder="e.g., MacBook Pro 2019"
-                  value={formData.productName}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-border rounded bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                  required
-                />
-              </div>
-
-              {/* Brand */}
-              <div>
-                <label
-                  htmlFor="brand"
-                  className="block text-sm font-medium text-foreground mb-2"
-                >
-                  Brand
-                </label>
-                <input
-                  id="brand"
-                  name="brand"
-                  type="text"
-                  placeholder="e.g., Apple"
-                  value={formData.brand}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-border rounded bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                />
-              </div>
-
-              {/* Condition */}
-              <div>
-                <label
-                  htmlFor="condition"
-                  className="block text-sm font-medium text-foreground mb-2"
-                >
-                  Condition *
-                </label>
-                <select
-                  id="condition"
-                  name="condition"
-                  value={formData.condition}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-border rounded bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                >
-                  <option value="like-new">Like New</option>
-                  <option value="good">Good</option>
-                  <option value="fair">Fair</option>
-                  <option value="poor">Poor</option>
-                </select>
-              </div>
-
-              {/* Price */}
-              <div>
-                <label
-                  htmlFor="price"
-                  className="block text-sm font-medium text-foreground mb-2"
-                >
-                  Price ($) *
-                </label>
-                <input
-                  id="price"
-                  name="price"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  placeholder="0.00"
-                  value={formData.price}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-border rounded bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                  required
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Description */}
-          <div className="bg-secondary rounded border border-border p-8">
-            <h2 className="text-xl font-semibold text-foreground mb-4">
-              Description
-            </h2>
-            <label
-              htmlFor="description"
-              className="block text-sm font-medium text-foreground mb-2"
-            >
-              Product Description *
-            </label>
-            <textarea
-              id="description"
-              name="description"
-              placeholder="Provide detailed information about your product. Include condition, any defects, what's included, size, color, etc."
-              value={formData.description}
-              onChange={handleChange}
-              rows={6}
-              className="w-full px-4 py-2 border border-border rounded bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary resize-none"
-              required
-            />
-            <p className="text-xs text-muted-foreground mt-2">
-              {formData.description.length}/500 characters
-            </p>
-          </div>
-
-          {/* Listing Settings */}
-          <div className="bg-secondary rounded border border-border p-8">
-            <h2 className="text-xl font-semibold text-foreground mb-6">
-              Listing Settings
-            </h2>
-
-            <div className="space-y-4">
-              <label className="flex items-start gap-3"></label>
-
-              <label className="flex items-start gap-3">
-                <input  type="checkbox"  defaultChecked className="w-4 h-4 border border-border rounded bg-background text-primary focus:ring-2 focus:ring-primary mt-1"/>
-                <div>
-                  <p className="font-medium text-foreground">
-                    Local pickup available
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    Buyers can pick up the item in person
-                  </p>
-                </div>
-              </label>
-
-              <label className="flex items-start gap-3">
-                <input
-                  type="checkbox"
-                  defaultChecked
-                  className="w-4 h-4 border border-border rounded bg-background text-primary focus:ring-2 focus:ring-primary mt-1"
-                />
-                <div>
-                  <p className="font-medium text-foreground">
-                    Shipping available
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    You'll handle shipping to buyers
-                  </p>
-                </div>
-              </label>
-            </div>
-          </div>
-
-          {/* Submit Button */}
-          <div className="flex gap-4 pt-4">
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="flex-1 bg-primary text-primary-foreground px-6 py-3 rounded font-medium hover:opacity-90 transition-opacity disabled:opacity-60 disabled:cursor-not-allowed"
-            >
-              {isSubmitting ? (
-                <span className="flex items-center justify-center gap-2">
-                  <span className="animate-spin">⏳</span>
-                  Creating Listing...
-                </span>
-              ) : (
-                "Create Listing"
-              )}
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setFormData({
-                  productName: "",
-                  brand: "",
-                  category: "electronics",
-                  condition: "good",
-                  price: "",
-                  description: "",
-                  image: null,
-                  imagePreview: "",
-                });
-              }}
-              className="flex-1 border border-border text-foreground px-6 py-3 rounded font-medium hover:bg-border transition-colors"
-            >
-              Clear Form
-            </button>
-          </div>
-
-          {/* Info */}
-          <div className="bg-blue-50 border border-blue-200 rounded p-4">
-            <p className="text-sm text-blue-900">
-              <strong>note:</strong> Use clear photos, be honest about the
-              condition, provide detailed descriptions, and set a fair price.
-            </p>
-          </div>
-        </form>
+        </div>
       </div>
-    </Layout>
+    </div>
   );
 }
